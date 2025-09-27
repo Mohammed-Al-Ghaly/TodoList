@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+.iconButton,
+.card {
+  transition: all 0.2s !important;
+}
+
+.iconButton:hover {
+  background-color: rgb(214, 210, 210) !important;
+  box-shadow: 0px 7px 7px rgba(0, 0, 0, 0.4);
+}
+
+/* .card:hover {
+  padding: 20px 0 !important;
+  box-shadow: 0px 7px 7px rgba(0, 0, 0, 0.4);
+} */
+@font-face {
+  font-family: Amiri;
+  src: url("/font/Amiri-Bold.ttf");
+  font-weight: 700;
+}
+@font-face {
+  font-family: Amiri;
+  src: url("/font/Amiri-Regular.ttf");
+  font-weight: 400;
+}
