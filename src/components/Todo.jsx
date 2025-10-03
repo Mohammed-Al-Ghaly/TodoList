@@ -4,27 +4,16 @@ import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
 import CheckIcon from "@mui/icons-material/Check";
-import ModeEditOutlinedIcon from "@mui/icons-material/ModeEditOutlined";
-import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import { useContext, useState } from "react";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+
+import { useContext } from "react";
 import { TodosContext } from "../contexts/todosContext";
+import { useToast } from "../contexts/ToastContext";
 
-export default function Todo({ todo }) {
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showUpdateModal, setShowUpdateModal] = useState(false);
-  const [updatedTodo, setUpdatedTodo] = useState({
-    title: todo.title,
-    details: todo.description,
-  });
-
+export default function Todo({ todo, showDeleteDaialog, showUpdateDialog }) {
   const { todos, setTodos } = useContext(TodosContext);
+  const { showHideToast } = useToast();
 
   // Event Handlers
   function handleCheckClick() {
@@ -36,119 +25,18 @@ export default function Todo({ todo }) {
     });
     setTodos(updatedTodos);
     localStorage.setItem("todos", JSON.stringify(updatedTodos));
+    showHideToast("تم تغيير حالة المهمة بنجاح");
   }
   function handleDeleteClick() {
-    setShowDeleteModal(true);
+    showDeleteDaialog(todo);
   }
   function handleUpdateClick() {
-    setShowUpdateModal(true);
+    showUpdateDialog(todo);
   }
-  function handleDeleteClose() {
-    setShowDeleteModal(false);
-  }
-  function handleUpdateClose() {
-    setShowUpdateModal(false);
-  }
-  function handleDeleteConfirm() {
-    const updatedTodos = todos.filter((t) => t.id !== todo.id);
-    setTodos(updatedTodos);
-    localStorage.setItem("todos", JSON.stringify(updatedTodos));
-    setShowDeleteModal(false);
-  }
-  function handleUpdateConfirm() {
-    const updatedTodos = todos.map((t) => {
-      if (t.id === todo.id) {
-        return {
-          ...t,
-          title: updatedTodo.title,
-          description: updatedTodo.details,
-        };
-      }
-      return t;
-    });
-    setTodos(updatedTodos);
-    setShowUpdateModal(false);
-    localStorage.setItem("todos", JSON.stringify(updatedTodos));
-  }
+
   // End Event Handlers
   return (
     <>
-      {/* Delete modal */}
-      <Dialog
-        onClose={handleDeleteClose}
-        open={showDeleteModal}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-        style={{ direction: "rtl" }}
-      >
-        <DialogTitle id="alert-dialog-title">
-          {"هل أنت متأكد من حذف هذه المهمة؟"}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            لن تتمكن من التراجع عن هذا الإجراء
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDeleteClose} autoFocus>
-            إغلاق
-          </Button>
-          <Button autoFocus onClick={handleDeleteConfirm}>
-            نعم قم بالحذف
-          </Button>
-        </DialogActions>
-      </Dialog>
-      {/* end Delete modal */}
-      {/* Update modal */}
-      <Dialog
-        onClose={handleUpdateClose}
-        open={showUpdateModal}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-        style={{ direction: "rtl" }}
-      >
-        <DialogTitle id="alert-dialog-title">{"تعديل المهمة"}</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            required
-            margin="dense"
-            id="name"
-            name="email"
-            label="عنوان المهمة"
-            fullWidth
-            variant="standard"
-            value={updatedTodo.title}
-            onChange={(e) =>
-              setUpdatedTodo({ ...updatedTodo, title: e.target.value })
-            }
-          />
-          <TextField
-            autoFocus
-            required
-            margin="dense"
-            id="name"
-            name="email"
-            label="تفاصيل المهمة"
-            fullWidth
-            variant="standard"
-            value={updatedTodo.details}
-            onChange={(e) =>
-              setUpdatedTodo({ ...updatedTodo, details: e.target.value })
-            }
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleUpdateClose} autoFocus>
-            إغلاق
-          </Button>
-          <Button autoFocus onClick={handleUpdateConfirm}>
-            تأكيد
-          </Button>
-        </DialogActions>
-      </Dialog>
-      {/* end Update modal */}
-
       <Card
         className="card"
         sx={{
@@ -208,7 +96,7 @@ export default function Todo({ todo }) {
                   border: "solid 3px #1769aa",
                 }}
               >
-                <ModeEditOutlinedIcon />
+                <EditIcon />
               </IconButton>
               {/* delete icon button */}
               <IconButton
@@ -221,7 +109,7 @@ export default function Todo({ todo }) {
                 }}
                 onClick={handleDeleteClick}
               >
-                <DeleteOutlineOutlinedIcon />
+                <DeleteIcon />
               </IconButton>
             </Grid>
           </Grid>
